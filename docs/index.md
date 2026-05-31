@@ -7,6 +7,7 @@ Sambop is a GitHub-native coordination layer for humans and AI agents.
 - [Concept: MVP](concepts/mvp.md)
 - [Concept: Sambop Rating](concepts/rating.md)
 - [Concept: Skills](concepts/skills.md)
+- [Concept: MCP](concepts/mcp.md)
 - [MCP install overview](install/README.md)
 
 ## One sentence
