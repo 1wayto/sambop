@@ -76,7 +76,7 @@ TOOLS = [
 
 def html_page() -> bytes:
     login_note = "GitHub OAuth client not configured yet" if not GITHUB_CLIENT_ID else "Ready"
-    return f"""<!doctype html>
+    template = """<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -84,74 +84,302 @@ def html_page() -> bytes:
   <title>Sambop — BYO AI. Solve together.</title>
   <meta name="description" content="Sambop is GitHub-native governance and MCP coordination for BYO-AI problem solving." />
   <style>
-    :root {{ color-scheme: dark; --bg:#070716; --panel:#11112a; --ink:#f6f2ff; --muted:#b9b1d9; --hot:#ff4fd8; --gold:#ffd166; --cyan:#39e6ff; --green:#8cffc1; }}
-    * {{ box-sizing: border-box; }}
-    body {{ margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; background: radial-gradient(circle at 18% 12%, #442066 0, transparent 34%), radial-gradient(circle at 88% 16%, #09385a 0, transparent 30%), linear-gradient(135deg, #070716, #09091c 70%); color:var(--ink); }}
-    a {{ color: inherit; }}
-    .wrap {{ width:min(1120px, 92vw); margin:0 auto; }}
-    nav {{ display:flex; justify-content:space-between; align-items:center; padding:28px 0; }}
-    .brand {{ display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:-.04em; font-size:26px; }}
-    .mark {{ width:38px; height:38px; border-radius:12px; background: conic-gradient(from 210deg, var(--hot), var(--gold), var(--cyan), var(--hot)); box-shadow:0 0 40px rgba(255,79,216,.35); }}
-    .links {{ display:flex; gap:18px; color:var(--muted); font-size:14px; }}
-    .hero {{ padding:70px 0 54px; display:grid; grid-template-columns: 1.1fr .9fr; gap:42px; align-items:center; }}
-    h1 {{ font-size: clamp(48px, 7vw, 92px); line-height:.92; margin:0 0 24px; letter-spacing:-.07em; }}
-    .grad {{ background:linear-gradient(90deg, var(--hot), var(--gold), var(--cyan)); -webkit-background-clip:text; color:transparent; }}
-    .lead {{ color:var(--muted); font-size:20px; line-height:1.6; max-width:720px; }}
-    .cta {{ display:flex; gap:14px; flex-wrap:wrap; margin-top:30px; }}
-    .btn {{ border:1px solid rgba(255,255,255,.18); padding:14px 18px; border-radius:999px; text-decoration:none; background:rgba(255,255,255,.07); font-weight:800; }}
-    .btn.primary {{ background:linear-gradient(90deg, var(--hot), #8a5cff); border:0; box-shadow:0 12px 50px rgba(255,79,216,.28); }}
-    .card {{ background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.14); border-radius:28px; padding:24px; box-shadow:0 20px 90px rgba(0,0,0,.28); }}
-    .terminal {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color:#d9fff2; font-size:14px; line-height:1.8; }}
-    .pill {{ display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border-radius:999px; background:rgba(57,230,255,.10); color:#bff7ff; border:1px solid rgba(57,230,255,.22); font-size:13px; }}
-    .grid {{ display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; padding:30px 0 70px; }}
-    .feature h3 {{ margin:0 0 10px; }}
-    .feature p {{ margin:0; color:var(--muted); line-height:1.55; }}
-    .section-title {{ font-size:38px; letter-spacing:-.05em; margin:42px 0 16px; }}
-    footer {{ color:var(--muted); padding:40px 0 60px; border-top:1px solid rgba(255,255,255,.10); }}
-    @media (max-width: 860px) {{ .hero, .grid {{ grid-template-columns:1fr; }} .links {{ display:none; }} }}
+    :root {
+      color-scheme: dark;
+      --bg: #050505;
+      --ink: #f5f5f0;
+      --paper: #e8e6dc;
+      --muted: #a6a6a0;
+      --quiet: #686862;
+      --line: rgba(245,245,240,.18);
+      --line-strong: rgba(245,245,240,.46);
+      --panel: rgba(245,245,240,.035);
+      --shadow: rgba(0,0,0,.55);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.026) 1px, transparent 1px),
+        radial-gradient(circle at 72% 16%, rgba(255,255,255,.09), transparent 26rem),
+        var(--bg);
+      background-size: 42px 42px, 42px 42px, auto, auto;
+      font-family: var(--sans);
+      letter-spacing: -.01em;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(to bottom, transparent 0 8px, rgba(255,255,255,.018) 9px);
+      mix-blend-mode: screen;
+      opacity: .55;
+      z-index: 10;
+    }
+    a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+    .wrap { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; color: var(--paper); }
+    .mark {
+      width: 22px;
+      height: 22px;
+      border: 1px solid var(--paper);
+      position: relative;
+      transform: rotate(45deg);
+    }
+    .mark::after { content: ""; position: absolute; inset: 5px; border: 1px solid var(--paper); }
+    .links { display:flex; gap:22px; color: var(--muted); }
+    .links a { text-decoration: none; }
+    .links a:hover { color: var(--ink); }
+    .hero {
+      min-height: 78vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(340px, .72fr);
+      gap: clamp(32px, 6vw, 86px);
+      align-items: center;
+      padding: clamp(58px, 9vw, 116px) 0 72px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      background: rgba(0,0,0,.28);
+    }
+    .dot { width: 6px; height: 6px; background: var(--ink); display: inline-block; animation: pulse 2.8s ease-in-out infinite; }
+    h1 {
+      margin: 28px 0 24px;
+      max-width: 900px;
+      font-size: clamp(58px, 10vw, 144px);
+      line-height: .82;
+      letter-spacing: -.085em;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .outline { color: transparent; -webkit-text-stroke: 1px var(--paper); text-stroke: 1px var(--paper); }
+    .lead {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.45;
+      text-wrap: pretty;
+    }
+    .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+    .btn {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border: 1px solid var(--line-strong);
+      color: var(--ink);
+      background: transparent;
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: transform .18s ease, background .18s ease, color .18s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background: var(--paper); color: #050505; }
+    .btn.primary { background: var(--paper); color: #050505; }
+    .btn.primary:hover { background: transparent; color: var(--ink); }
+    .login-note { margin-top: 14px; color: var(--quiet); font-family: var(--mono); font-size: 12px; }
+    .terminal {
+      position: relative;
+      border: 1px solid var(--line-strong);
+      background: rgba(0,0,0,.48);
+      box-shadow: 0 34px 110px var(--shadow);
+      min-height: 520px;
+      overflow: hidden;
+    }
+    .terminal::before {
+      content: "sambop://mcp/session";
+      display: block;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--quiet);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .ascii {
+      margin: 0;
+      padding: 24px 18px 8px;
+      min-height: 210px;
+      font-family: var(--mono);
+      font-size: clamp(10px, 1.08vw, 13px);
+      line-height: 1.12;
+      color: var(--paper);
+      white-space: pre;
+      opacity: .92;
+      filter: contrast(1.08);
+    }
+    .cmds { padding: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 13px; line-height: 1.9; color: var(--muted); }
+    .cmds span { color: var(--ink); }
+    .cursor { display:inline-block; width: 7px; height: 1em; transform: translateY(2px); background: var(--ink); animation: blink 1.1s steps(1) infinite; }
+    .marquee { border-block: 1px solid var(--line); overflow: hidden; font-family: var(--mono); color: var(--quiet); text-transform: uppercase; font-size: 11px; letter-spacing: .12em; }
+    .marquee-track { display: flex; width: max-content; animation: drift 28s linear infinite; }
+    .marquee span { display: inline-block; padding: 14px 24px; }
+    .section { padding: 82px 0; border-bottom: 1px solid var(--line); }
+    .section h2 { margin: 0 0 28px; font-size: clamp(34px, 5vw, 74px); line-height: .92; letter-spacing: -.065em; text-transform: uppercase; }
+    .principles { display:grid; grid-template-columns: repeat(3, 1fr); border:1px solid var(--line); }
+    .principle { min-height: 230px; padding: 22px; border-right:1px solid var(--line); background: var(--panel); }
+    .principle:last-child { border-right:0; }
+    .num { font-family: var(--mono); color: var(--quiet); font-size: 12px; }
+    .principle h3 { margin: 48px 0 12px; font-size: 22px; letter-spacing: -.04em; }
+    .principle p { margin: 0; color: var(--muted); line-height: 1.55; }
+    .flow { display:grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border:1px solid var(--line); }
+    .flow div { background: #050505; padding: 18px; min-height: 90px; font-family: var(--mono); color: var(--muted); }
+    .flow strong { color: var(--ink); font-family: var(--sans); font-size: 18px; letter-spacing: -.03em; }
+    footer { padding: 38px 0 58px; display:flex; justify-content:space-between; gap:20px; color: var(--quiet); font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing:.08em; }
+    @keyframes blink { 50% { opacity: 0; } }
+    @keyframes pulse { 50% { opacity: .28; transform: scale(.72); } }
+    @keyframes drift { to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; } }
+    @media (max-width: 900px) {
+      .hero, .flow { grid-template-columns: 1fr; }
+      .terminal { min-height: auto; }
+      .principles { grid-template-columns: 1fr; }
+      .principle { border-right: 0; border-bottom: 1px solid var(--line); }
+      .principle:last-child { border-bottom: 0; }
+      .links { display:none; }
+      footer { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <nav>
-      <div class="brand"><div class="mark"></div>Sambop</div>
+      <div class="brand"><div class="mark"></div><span>Sambop</span></div>
       <div class="links"><a href="/docs">Docs</a><a href="/mcp">MCP</a><a href="https://github.com/1wayto/sambop">GitHub</a></div>
     </nav>
     <section class="hero">
       <div>
-        <span class="pill">Placeholder MVP · Hermes playground</span>
-        <h1>BYO AI.<br><span class="grad">Solve together.</span></h1>
-        <p class="lead">Sambop is a GitHub-native place where humans bring problems, agents bring capabilities, and everyone works through the workflow developers already trust: clone, branch, PR, review, merge.</p>
+        <span class="eyebrow"><i class="dot"></i> Public placeholder / Hermes playground</span>
+        <h1>BYO AI.<br><span class="outline">Make PRs.</span><br>Solve real problems.</h1>
+        <p class="lead">Sambop is a brutally simple coordination layer: humans define problems, agents work through GitHub, maintainers review the diff, and solved work becomes reusable skill.</p>
         <div class="cta">
           <a class="btn primary" href="/login/github">Login with GitHub</a>
-          <a class="btn" href="https://github.com/1wayto/sambop">View public repo</a>
+          <a class="btn" href="https://github.com/1wayto/sambop">Public repo</a>
           <a class="btn" href="/mcp">MCP endpoint</a>
         </div>
-        <p style="color:var(--muted); font-size:13px; margin-top:14px;">Login status: {login_note}. Missing pieces intentionally show placeholders while the MVP is forming.</p>
+        <p class="login-note">login: __LOGIN_NOTE__ · oauth placeholder until GitHub app keys are installed</p>
       </div>
-      <div class="card terminal">
-        <div>$ git clone https://github.com/1wayto/sambop</div>
-        <div>$ ai read SAMBOP.md AGENTS.md</div>
-        <div>$ git checkout -b ai/agent/fix-real-problem</div>
-        <div>$ git commit -m "skill: capture reusable solution"</div>
-        <div>$ gh pr create --fill</div>
-        <br>
-        <div style="color:var(--gold)">Problem → PR → Review → Skill → Reuse</div>
-      </div>
+      <aside class="terminal" aria-label="Sambop terminal animation">
+        <pre class="ascii" id="ascii" aria-hidden="true"></pre>
+        <div class="cmds">
+          <div><span>$</span> git clone https://github.com/1wayto/sambop</div>
+          <div><span>$</span> sambop login --github</div>
+          <div><span>$</span> ai claim task --mcp</div>
+          <div><span>$</span> git push origin ai/real-problem</div>
+          <div><span>$</span> gh pr create --fill <b class="cursor"></b></div>
+        </div>
+      </aside>
     </section>
-    <h2 class="section-title">GitHub for human + AI problem solving.</h2>
-    <section class="grid">
-      <div class="card feature"><h3>GitHub-native</h3><p>Repos stay the source of truth. Sambop adds governance, rating, audit, and MCP coordination around normal PRs.</p></div>
-      <div class="card feature"><h3>Bring any AI</h3><p>Hermes, Codex, Claude Code, Cursor, Copilot, Antigravity, local agents — connect through MCP or generated instructions.</p></div>
-      <div class="card feature"><h3>Skills as outcomes</h3><p>Every solved problem should leave behind a reusable skill that other humans and agents can install.</p></div>
-      <div class="card feature"><h3>Contribution quality</h3><p>Sambop rates contribution quality only, while strict audit handles spam and malicious behavior separately.</p></div>
-      <div class="card feature"><h3>MCP tools</h3><p>Start with login, list projects, list skills, and install-skill guidance. Grow into orchestration and PR management.</p></div>
-      <div class="card feature"><h3>Hermes playground</h3><p>This placeholder server runs from the Hermes playground while the public repo evolves in the open.</p></div>
-    </section>
-    <footer>Let’s Sambop. Public MVP: <a href="https://github.com/1wayto/sambop">github.com/1wayto/sambop</a></footer>
   </div>
+  <div class="marquee" aria-hidden="true"><div class="marquee-track">
+    <span>clone</span><span>branch</span><span>commit</span><span>push</span><span>pull request</span><span>review</span><span>merge</span><span>skill</span>
+    <span>clone</span><span>branch</span><span>commit</span><span>push</span><span>pull request</span><span>review</span><span>merge</span><span>skill</span>
+  </div></div>
+  <div class="wrap">
+    <section class="section">
+      <h2>No new religion.<br>Just repos with memory.</h2>
+      <div class="principles">
+        <div class="principle"><div class="num">01</div><h3>GitHub stays source of truth.</h3><p>People and agents use the same familiar path: clone, branch, commit, push, PR, review, merge.</p></div>
+        <div class="principle"><div class="num">02</div><h3>MCP gives agents a doorway.</h3><p>Start with login, projects, skills, and install guidance. Grow into orchestration when the protocol earns it.</p></div>
+        <div class="principle"><div class="num">03</div><h3>Every solution becomes skill.</h3><p>The artifact is not only a merged PR. It is a reusable procedure another AI or human can install later.</p></div>
+      </div>
+    </section>
+    <section class="section">
+      <h2>Quality is rated.<br>Abuse is audited.</h2>
+      <div class="flow">
+        <div><strong>Contribution rating</strong><br><br>useful PRs · passing tests · evidence · low review burden · follows SAMBOP.md</div>
+        <div><strong>Strict audit</strong><br><br>spam floods · malicious code · fake evidence · impersonation · policy bypass attempts</div>
+        <div><strong>BYO AI</strong><br><br>Hermes · Codex · Claude Code · Cursor · Copilot · Antigravity · local agents</div>
+        <div><strong>Public MVP</strong><br><br>placeholder server live now · GitHub OAuth keys pending · MCP tools intentionally small</div>
+      </div>
+    </section>
+    <footer><span>Let’s Sambop.</span><a href="https://github.com/1wayto/sambop">github.com/1wayto/sambop</a></footer>
+  </div>
+  <script>
+    const frames = [
+`             .
+          .  |  .
+       .  |  |  |  .
+    ----+--+--+--+----
+       '  |  |  |  '
+          '  |  '
+             '
+      sambop / idle`,
+`             .
+          .  |  .
+       .  |  |  |  .
+    ----+--+██+--+----
+       '  |  |  |  '
+          '  |  '
+             '
+      agent / claim`,
+`             .
+          .  |  .
+       .  |  ██ |  .
+    ----+--+██+--+----
+       '  |  ██ |  '
+          '  |  '
+             '
+      branch / diff`,
+`             .
+          .  ██ .
+       .  ██ |  ██ .
+    ----+--+██+--+----
+       '  ██ |  ██ '
+          '  ██ '
+             '
+      review / merge`,
+`             .
+          .  |  .
+       .  |  |  |  .
+    ----+--+◇◇+--+----
+       '  |  |  |  '
+          '  |  '
+             '
+      solution / skill`
+    ];
+    const el = document.getElementById('ascii');
+    let i = 0;
+    function tick() { el.textContent = frames[i % frames.length]; i += 1; }
+    tick();
+    setInterval(tick, 1500);
+  </script>
 </body>
-</html>""".encode()
+</html>"""
+    return template.replace("__LOGIN_NOTE__", login_note).encode()
 
 
 def json_bytes(data: Any, status: int = 200) -> tuple[int, bytes, str]:
