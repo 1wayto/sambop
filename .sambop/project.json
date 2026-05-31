@@ -1,0 +1,20 @@
+{
+  "name": "sambop",
+  "description": "GitHub-native governance and MCP coordination for BYO-AI problem solving.",
+  "homepage": "https://sambop.com",
+  "github": "https://github.com/1wayto/sambop",
+  "mvp": {
+    "source_of_truth": "github",
+    "coordination": "sambop-mcp",
+    "orchestration": "hermes-playground",
+    "hosting": "github-pages-for-docs",
+    "mcp_hosting": "hermes-playground-server"
+  },
+  "principles": [
+    "GitHub workflow stays familiar",
+    "Humans and AIs contribute through branches and PRs",
+    "Sambop rates contribution quality only",
+    "Audit handles spam and malicious behavior separately",
+    "Solved problems become reusable skills"
+  ]
+}

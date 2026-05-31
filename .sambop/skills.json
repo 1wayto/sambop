@@ -1,0 +1,19 @@
+{
+  "required": [
+    {
+      "name": "sambop-git-pr-workflow",
+      "reason": "All Sambop contributors use clone, branch, push, PR, review, merge."
+    }
+  ],
+  "recommended": [
+    {
+      "name": "sambop-mcp-client-setup",
+      "reason": "Connect AI tools to the Sambop MCP server."
+    },
+    {
+      "name": "sambop-skill-authoring",
+      "reason": "Convert solved problems into reusable skills."
+    }
+  ],
+  "published": []
+}
